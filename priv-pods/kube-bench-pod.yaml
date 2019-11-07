@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-bench-pod
+  namespace: default
+spec:
+  containers:
+  - name: busybox
+    image: aquasec/kube-bench:0.1.0
+    command: ["/bin/sh"]
+    volumeMounts:
+      - name: var-lib-kubelet
+        mountPath: /var/lib/kubelet
+      - name: etc-systemd
+        mountPath: /etc/systemd
+      - name: etc-kubernetes
+        mountPath: /etc/kubernetes
+      - name: systemd
+        mountPath: /etc/systemd/system
+      - name: usr-bin
+        mountPath: /usr/bin2
+      - name: the-host
+        mountPath: /host
+    resources:
+      limits:
+        cpu: 200m
+        memory: 100Mi
+      requests:
+        cpu: 100m
+        memory: 50Mi
+    stdin: true
+    securityContext:
+      privileged: true
+  volumes:
+  - name: var-lib-kubelet
+    hostPath:
+      path: "/var/lib/kubelet"
+  - name: etc-systemd
+    hostPath:
+      path: "/lib/systemd"
+  - name: etc-kubernetes
+    hostPath:
+      path: "/etc/kubernetes"
+  - name: systemd
+    hostPath:
+      path: "/lib/systemd/system"
+  - name: usr-bin
+    hostPath:
+      path: "/usr/bin"  
+  - name: the-host
+    hostPath:
+      path: "/"  
+  hostNetwork: true
+  hostPID: true
+  restartPolicy: Never

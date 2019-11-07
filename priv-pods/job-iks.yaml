@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-bench
+spec:
+  template:
+    spec:
+      hostPID: true
+      containers:
+      - name: kube-bench
+        image: robertojrojas/kube-bench:0.1.0-269 
+        command: ["kube-bench", "-v", "9", "--version", "1.13", "node"]
+        #command: ["kube-bench", "node", "-v", "9"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: var-lib-kubelet
+          mountPath: /var/lib/kubelet
+        - name: etc-systemd
+          mountPath: /etc/systemd
+        - name: etc-kubernetes
+          mountPath: /etc/kubernetes
+      restartPolicy: Never
+      volumes:
+      - name: var-lib-kubelet
+        hostPath:
+          path: "/var/lib/kubelet"
+      - name: etc-systemd
+        hostPath:
+          path: "/lib/systemd"
+      - name: etc-kubernetes
+        hostPath:
+          path: "/etc/kubernetes"
+      - name: usr-bin
+        hostPath:
+          path: "/usr/bin"
